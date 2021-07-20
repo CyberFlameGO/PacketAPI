@@ -1,6 +1,10 @@
 package me.rhys.plugin.packet.packets.server;
 
+import me.rhys.plugin.Plugin;
+import me.rhys.plugin.event.api.Event;
 import me.rhys.plugin.packet.packets.Packet;
+import me.rhys.plugin.packet.packets.wrapped.client.WrappedClientChatMessage;
+import me.rhys.plugin.packet.packets.wrapped.server.WrappedServerChatMessage;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EnumChatFormat;
@@ -38,7 +42,19 @@ public class PacketServerChat implements Packet {
                             EnumChatFormat.WHITE));
                 }
 
-                packetPlayOutChat.components = TextComponent.fromLegacyText(component.toLegacyText() + " [SENT]");
+                final String[] chatMessage = {component.toLegacyText()};
+
+                Plugin.getInstance().getEventManager().getEventList().forEach(event -> {
+                    Object obj = event.onPacket(player, new WrappedServerChatMessage(chatMessage[0]),
+                            Event.Direction.SERVER);
+
+                    if (obj instanceof WrappedServerChatMessage) {
+                        WrappedServerChatMessage wrappedServerChatMessage = (WrappedServerChatMessage) obj;
+                        chatMessage[0] = wrappedServerChatMessage.getSentMessage();
+                    }
+                });
+
+                packetPlayOutChat.components = TextComponent.fromLegacyText(chatMessage[0]);
             } catch (Exception e) {
                 e.printStackTrace();
             }

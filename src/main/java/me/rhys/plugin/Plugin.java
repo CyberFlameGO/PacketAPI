@@ -1,6 +1,7 @@
 package me.rhys.plugin;
 
 import lombok.Getter;
+import me.rhys.plugin.event.impl.EventManager;
 import me.rhys.plugin.listener.PlayerListener;
 import me.rhys.plugin.packet.ChannelHandler;
 import me.rhys.plugin.packet.impl.Instance1_8;
@@ -15,12 +16,14 @@ public class Plugin extends JavaPlugin {
 
     private PlayerListener playerListener;
 
+    private final EventManager eventManager = new EventManager();
     private final ChannelHandler channelHandler = new Instance1_8();
     private final ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     @Override
     public void onEnable() {
         instance = this;
+        this.eventManager.setup();
         getServer().getPluginManager().registerEvents((this.playerListener = new PlayerListener()), this);
     }
 

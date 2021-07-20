@@ -1,0 +1,5 @@
+name: PacketAPI
+main: me.rhys.plugin.Plugin
+version: 0.1
+description: Basic Packet API to show competency to CubeCraft Games.
+author: Rhys
